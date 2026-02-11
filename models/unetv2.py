@@ -5,7 +5,6 @@ Author: Amir Aghdam
 """
 
 from torch import nn
-# from torchsummary import summary
 import torch
 import time
 
@@ -89,32 +88,26 @@ class UNet3DV2(nn.Module):
     def __init__(self, in_channels, num_classes, level_channels=[128, 256, 512, 1024], bottleneck_channel=2048) -> None:
         super(UNet3DV2, self).__init__()
         
-        # Analysis path
         self.a_block1 = Conv3DBlock(in_channels=in_channels, out_channels=level_channels[0])
         self.a_block2 = Conv3DBlock(in_channels=level_channels[0], out_channels=level_channels[1])
         self.a_block3 = Conv3DBlock(in_channels=level_channels[1], out_channels=level_channels[2])
         self.a_block4 = Conv3DBlock(in_channels=level_channels[2], out_channels=level_channels[3])
 
-        # Bottleneck
         self.bottleneck = Conv3DBlock(in_channels=level_channels[3], out_channels=bottleneck_channel, bottleneck=True)
 
-        # Synthesis path
         self.s_block4 = UpConv3DBlock(in_channels=bottleneck_channel, res_channels=level_channels[3])
         self.s_block3 = UpConv3DBlock(in_channels=level_channels[3], res_channels=level_channels[2])
         self.s_block2 = UpConv3DBlock(in_channels=level_channels[2], res_channels=level_channels[1])
         self.s_block1 = UpConv3DBlock(in_channels=level_channels[1], res_channels=level_channels[0], last_layer=True, num_classes=num_classes)
 
     def forward(self, input):
-        # Analysis path forward feed
         out, residual1 = self.a_block1(input)
         out, residual2 = self.a_block2(out)
         out, residual3 = self.a_block3(out)
         out, residual4 = self.a_block4(out)
 
-        # Bottleneck
         latent, _ = self.bottleneck(out)
 
-        # Synthesis path forward feed
         out = self.s_block4(latent, residual4)
         out = self.s_block3(out, residual3)
         out = self.s_block2(out, residual2)

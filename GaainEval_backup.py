@@ -23,14 +23,11 @@ import gc
 class GaainEval:
     def __init__(self, args):
         self.cli_args = args
-        # args_dict = vars(args)
         args_dict = {
             **vars(args),
-            # **VM100_1
         }
         self.classes = VM100_1['classes']
         
-        # self.use_cuda = torch.cuda.is_available()
         self.use_cuda = False
         if self.use_cuda:
             self.device = torch.device("cuda")
@@ -43,8 +40,6 @@ class GaainEval:
         self.full_pattern = os.path.join(self.model_path, self.model_pattern)
         self.full_list = natsorted(glob.glob(self.full_pattern))
         
-        # for el in self.full_list:
-        #     print(el)
         
         self.transforms_dict = {
             'resize': tio.Resize(
@@ -53,7 +48,7 @@ class GaainEval:
             **(
                 {'zoom': tio.RandomAffine(
                     scales=(self.cli_args.zoom, self.cli_args.zoom),
-                    image_interpolation='bspline',  # 'bspline' 이미지에 적용할 보간 방법
+                    image_interpolation='bspline',
                     p=1.0,
                 )} if self.cli_args.zoom > 1 else {}
             ),
@@ -62,8 +57,6 @@ class GaainEval:
             ),
         }
         
-        # for el in self.transforms_dict.keys():
-        #     print(el)
     
     
     
@@ -74,7 +67,6 @@ class GaainEval:
     def loadModel(self, full_path):
         segmentation_model = unet.UNet3D(
             in_channels=1,
-            # num_classes=dset.class_values.__len__(),
             num_classes=6,
         )
         model_info_dict = torch.load(full_path)
@@ -82,9 +74,7 @@ class GaainEval:
     
         if self.use_cuda:
             segmentation_model = segmentation_model.to(self.device)
-            # print(f"Using CUDA device.")
         else:
-            # print(f"Using CPU.")
             pass
             
         return segmentation_model
@@ -92,30 +82,27 @@ class GaainEval:
     
     
     def initValDl(self):
-        # VM100_1
         test_ds = GaainDataset(
             patient_dir=VM100_1['test_dir'],
             images_dir=VM100_1['orig_file'],
             masks_dir=VM100_1['mask_file'],
             classes=self.classes,
-            # preprocessing=self.preprocessing_list,
             augmentation=tio.Compose([
                 *[val for val in self.transforms_dict.values()]
             ]),
         )
         batch_size = self.cli_args.batch_size
 
-        if os.name == 'nt':  # Windows 환경인 경우
+        if os.name == 'nt':
             test_loader = DataLoader(
                 test_ds,
                 batch_size=batch_size,
                 num_workers=self.cli_args.num_workers,
                 pin_memory=self.use_cuda,
-                # persistent_workers=self.use_cuda,
                 drop_last=True,
                 shuffle=False,
             )
-        else:  # Windows가 아닌 다른 환경인 경우
+        else:
             test_loader = DataLoader(
                 test_ds,
                 batch_size=batch_size,
@@ -141,52 +128,32 @@ class GaainEval:
     
     def main(self):
         dloader = self.initValDl()
-        # dset = dloader.dataset
-        # print(dset.__len__(), dset[0].__len__())
         n_models = len(self.full_list)
         n_classes = len(self.classes) + 1
         bucket_array = np.zeros((n_models, n_classes))
         bucket_list = []
-        for bat_idx, batch_tup in enumerate(dloader): # epoch
-            # print(batch_tup.__len__())
+        for bat_idx, batch_tup in enumerate(dloader):
             input_t, label_t, labels_t = batch_tup
-            for model_idx, el in enumerate(self.full_list): # model
-                # if model_idx < 3:# len(self.full_list):
+            for model_idx, el in enumerate(self.full_list):
                 if model_idx < len(self.full_list):
-                    # print(f'status: {bat_idx+1}/{dloader.__len__()}, model: {os.path.basename(el)}')
                     model = self.loadModel(el)
                     model.eval()
                     input_g = input_t.to(self.device, non_blocking=True)
                     pred_g, _ = model(input_g)
                     pred_g = torch.sigmoid(pred_g.unsqueeze(2))
-                    # print('input shape: ', input_t.shape)
-                    # print('target shape: ', labels_t.shape)
-                    # print('pred shape: ', pred_g.shape)
 
                     labels_n = labels_t.squeeze(2).cpu().numpy()
                     pred_n = pred_g.squeeze(2).cpu().detach().numpy()
-                    # AP 값을 저장할 리스트
                     ap_values = []
                     for idx in range(len(self.classes)):
-                        # 예측 결과와 실제 레이블
-                        trg = labels_n[:,idx]    # 실제 레이블 텐서
-                        prd = pred_n[:,idx] # 모델의 예측 결과 텐서
+                        trg = labels_n[:,idx]
+                        prd = pred_n[:,idx]
 
                         precision, recall, thresholds = self.calculate_precision_recall(prd, trg)
 
-                        # Average Precision 계산
                         ap = auc(recall, precision)
                         ap_values.append(round(ap,3))
-                        # print(f"{self.classes[idx]:>25}: {ap:10.3f}")
-                    # mAP 계산
                     mAP = np.mean(ap_values)
-                    # print(f"{self.classes[0]:>25}: {ap_values[0]:10.3f}")
-                    # print(f"{self.classes[1]:>25}: {ap_values[1]:10.3f}")
-                    # print(f"{self.classes[2]:>25}: {ap_values[2]:10.3f}")
-                    # print(f"{self.classes[3]:>25}: {ap_values[3]:10.3f}")
-                    # print(f"{self.classes[4]:>25}: {ap_values[4]:10.3f}")
-                    # print(f"{self.classes[5]:>25}: {ap_values[5]:10.3f}")
-                    # print(f"{'mAP':>25}: {mAP:10.3f}")
                     bucket_array[model_idx, :] = np.array([*ap_values, mAP])
                     bucket_list.append([
                         f"{ap_values[0]:.3f}",
@@ -200,22 +167,17 @@ class GaainEval:
                 else:
                     continue
 
-                # del model
-                # torch.cuda.empty_cache()
-                # gc.collect()
                 
             if bat_idx == 0:
                 break
         for idx, el in enumerate(bucket_list):
             print(el)
         
-        # CSV 파일로 저장
         header = ','.join(self.classes)+',mAP'
         np.savetxt(f"results/{self.cli_args.project}.csv", bucket_array, delimiter=",", fmt='%f', header=header, comments='')
         
 
 if __name__ == '__main__':
-#     python .\GaainEval.py -GRP hpc -PRJ Fedprox64_niid_9_0_0 -SVR avg -ZM 1.5 -BAT 8 -RS 64
     ctime = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
     try:
         parser = argparse.ArgumentParser(description='Run GaainFed locally')

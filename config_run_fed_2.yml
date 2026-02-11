@@ -210,4 +210,3 @@
       command: 
         cmd: "ansible-playbook -i ./{{ inventory_file }}  --vault-password-file ./pwds/vault_password.txt ./{{ ansible_playbook_filename }} -e 'inventory_file={{ inventory_file }} grp={{ grp }} proj={{ proj }} epc={{ epoch }} offset={{ start_offset }} cnt={{ counter }} end={{ counter_end }} init=False'"
       when: counter | int <= counter_end | int
-      

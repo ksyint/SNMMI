@@ -8,12 +8,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-# from torchvision import datasets, transforms
-# from torch.optim.lr_scheduler import StepLR
 import models.unet as unet
 from utils.tools import *
 from utils.config import * 
+from utils.logconf import logging
 import glob
+import os
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 def fix_seed(random_seed, use_cuda):
     """
@@ -23,7 +26,7 @@ def fix_seed(random_seed, use_cuda):
     torch.manual_seed(random_seed)
     if use_cuda:
         torch.cuda.manual_seed(random_seed)
-        torch.cuda.manual_seed_all(random_seed)  # if use multi-GPU
+        torch.cuda.manual_seed_all(random_seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     np.random.seed(random_seed)
@@ -37,12 +40,8 @@ class GaainFed:
         
         assert self.cli_args.counter > 0
         
-        # 난수 시드 고정
         fix_seed(self.cli_args.seed, False)
         
-        # torch.manual_seed(self.cli_args.seed)
-        # np.random.seed(self.cli_args.seed)
-        # random.seed(self.cli_args.seed)
             
         analaysis_list = [
             VM100_1,
@@ -65,7 +64,6 @@ class GaainFed:
     def initModel(self):
         segmentation_model = unet.UNet3D(
             in_channels=1,
-            # num_classes=dset.class_values.__len__(),
             num_classes=self.num_classes,
         )
         if self.cli_args.counter == 0:
@@ -82,7 +80,6 @@ class GaainFed:
             assert len(statelist) != 0
 
             for layer_name in segmentation_model.state_dict():
-                # num_batches_tracked는 업데이트하지 않음
                 if "num_batches_tracked" in layer_name:
                     continue
                 segmentation_model.state_dict()[layer_name] *= 0
@@ -90,24 +87,12 @@ class GaainFed:
             for idx, el in enumerate(statelist):
                 _state = torch.load(el, map_location=torch.device('cpu'))['model_state']
                 for layer_name in segmentation_model.state_dict():
-                    # num_batches_tracked는 업데이트하지 않음
                     if "num_batches_tracked" in layer_name:
                         continue
                     _state[layer_name] *= (1/len(statelist))
                     segmentation_model.state_dict()[layer_name] += _state[layer_name]
 
 
-            # new_state_dict = collections.OrderedDict()
-            # for idx, el in enumerate(statelist):
-            #     _state = torch.load(el, map_location=torch.device('cpu'))['model_state']
-            #     for layer_name, layer_weights in _state.items():
-            #         if "num_batches_tracked" in layer_name:
-            #             continue
-            #         if layer_name not in new_state_dict:
-            #             new_state_dict[layer_name] = layer_weights / len(statelist)
-            #         else:
-            #             new_state_dict[layer_name] += layer_weights / len(statelist)
-            # segmentation_model.load_state_dict(new_state_dict)
             
         return segmentation_model
 

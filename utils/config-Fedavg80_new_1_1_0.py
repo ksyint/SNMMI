@@ -1,7 +1,5 @@
 import os
 
-# import models.unet as unet
-# anp -e 'grp=hpc proj=Fedprox64_non_iid_5 epc=1 end=20' config_run_fed.yml
 
 Striatum_ADNI = {
     'description': 'Striatum',
@@ -10,12 +8,12 @@ Striatum_ADNI = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate',  # 11
-        'Left-Putamen',  # 12
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate',  # 50
-        'Right-Putamen',  # 51
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'lr': 1e-3,
     'scheduler_step': 1,
@@ -50,16 +48,12 @@ VM100_1 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        # 'Left-Cerebral-White-Matter', # 2
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'Right-Cerebral-White-Matter', # 41
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       3.,
@@ -79,37 +73,13 @@ VM100_2 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'ctx-lh-caudalmiddlefrontal', # 1003
-        # 'ctx-lh-inferiorparietal', # 1008
-        # 'ctx-lh-inferiortemporal', # 1009
-        # 'ctx-lh-middletemporal', # 1015
-        # 'ctx-lh-postcentral', # 1022
-        # 'ctx-lh-precentral', # 1024
-        # 'ctx-lh-rostralmiddlefrontal', # 1027
-        # 'ctx-lh-superiorfrontal', # 1028
-        # 'ctx-lh-superiorparietal', # 1029
-        # 'ctx-lh-superiortemporal', # 1030
-        # 'ctx-lh-supramarginal', # 1031
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
         
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
-        # 'ctx-rh-caudalmiddlefrontal', # 2003
-        # 'ctx-rh-inferiorparietal', # 2008
-        # 'ctx-rh-inferiortemporal', # 2009
-        # 'ctx-rh-middletemporal', # 2015
-        # 'ctx-rh-postcentral', # 2022
-        # 'ctx-rh-precentral', # 2024
-        # 'ctx-rh-rostralmiddlefrontal', # 2027
-        # 'ctx-rh-superiorfrontal', # 2028
-        # 'ctx-rh-superiorparietal', # 2029
-        # 'ctx-rh-superiortemporal', # 2030
-        # 'ctx-rh-supramarginal', # 2031
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       1.,
@@ -125,16 +95,12 @@ VP100_1 = {
     'seed': 2,
     **Striatum_ADNI,
     'classes': [
-        # 'Left-Cerebral-White-Matter', # 2
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'Right-Cerebral-White-Matter', # 41
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       3.,
@@ -150,16 +116,12 @@ VP100_2 = {
     'seed': 3,
     **Striatum_ADNI,
     'classes': [
-        # 'Left-Cerebral-White-Matter', # 2
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'Right-Cerebral-White-Matter', # 41
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       3.,
@@ -177,36 +139,12 @@ VV100_1 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'ctx-lh-caudalmiddlefrontal', # 1003
-        # 'ctx-lh-inferiorparietal', # 1008
-        # 'ctx-lh-inferiortemporal', # 1009
-        # 'ctx-lh-middletemporal', # 1015
-        # 'ctx-lh-postcentral', # 1022
-        # 'ctx-lh-precentral', # 1024
-        # 'ctx-lh-rostralmiddlefrontal', # 1027
-        # 'ctx-lh-superiorfrontal', # 1028
-        # 'ctx-lh-superiorparietal', # 1029
-        # 'ctx-lh-superiortemporal', # 1030
-        # 'ctx-lh-supramarginal', # 1031
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
-        # 'ctx-rh-caudalmiddlefrontal', # 2003
-        # 'ctx-rh-inferiorparietal', # 2008
-        # 'ctx-rh-inferiortemporal', # 2009
-        # 'ctx-rh-middletemporal', # 2015
-        # 'ctx-rh-postcentral', # 2022
-        # 'ctx-rh-precentral', # 2024
-        # 'ctx-rh-rostralmiddlefrontal', # 2027
-        # 'ctx-rh-superiorfrontal', # 2028
-        # 'ctx-rh-superiorparietal', # 2029
-        # 'ctx-rh-superiortemporal', # 2030
-        # 'ctx-rh-supramarginal', # 2031
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       1.,
@@ -224,36 +162,12 @@ VV100_2 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        # 'Left-Cerebral-Cortex', # 3
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate', # 11
-        'Left-Putamen', # 12
-        # 'ctx-lh-caudalmiddlefrontal', # 1003
-        # 'ctx-lh-inferiorparietal', # 1008
-        # 'ctx-lh-inferiortemporal', # 1009
-        # 'ctx-lh-middletemporal', # 1015
-        # 'ctx-lh-postcentral', # 1022
-        # 'ctx-lh-precentral', # 1024
-        # 'ctx-lh-rostralmiddlefrontal', # 1027
-        # 'ctx-lh-superiorfrontal', # 1028
-        # 'ctx-lh-superiorparietal', # 1029
-        # 'ctx-lh-superiortemporal', # 1030
-        # 'ctx-lh-supramarginal', # 1031
-        # 'Right-Cerebral-Cortex', # 42
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate', # 50
-        'Right-Putamen', # 51
-        # 'ctx-rh-caudalmiddlefrontal', # 2003
-        # 'ctx-rh-inferiorparietal', # 2008
-        # 'ctx-rh-inferiortemporal', # 2009
-        # 'ctx-rh-middletemporal', # 2015
-        # 'ctx-rh-postcentral', # 2022
-        # 'ctx-rh-precentral', # 2024
-        # 'ctx-rh-rostralmiddlefrontal', # 2027
-        # 'ctx-rh-superiorfrontal', # 2028
-        # 'ctx-rh-superiorparietal', # 2029
-        # 'ctx-rh-superiortemporal', # 2030
-        # 'ctx-rh-supramarginal', # 2031
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'weights': [
       1.,

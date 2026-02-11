@@ -1,7 +1,5 @@
 import os
 
-# import models.unet as unet
-# anp -e 'grp=hpc proj=Fedprox64_non_iid_5 epc=1 end=20' config_run_fed.yml
 
 Striatum_ADNI = {
     'description': 'Striatum',
@@ -10,12 +8,12 @@ Striatum_ADNI = {
     'orig_file': 'orig.nii.gz',
     'mask_file': 'aseg.nii.gz',
     'classes': [
-        'Left-Cerebellum-Cortex', # 8
-        'Left-Caudate',  # 11
-        'Left-Putamen',  # 12
-        'Right-Cerebellum-Cortex', # 47
-        'Right-Caudate',  # 50
-        'Right-Putamen',  # 51
+        'Left-Cerebellum-Cortex',
+        'Left-Caudate',
+        'Left-Putamen',
+        'Right-Cerebellum-Cortex',
+        'Right-Caudate',
+        'Right-Putamen',
     ],
     'lr': 1e-3,
     'scheduler_step': 1,

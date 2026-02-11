@@ -24,8 +24,6 @@ from functools import lru_cache
 from utils.tools import CLASSES, COLORDICT
 from utils.logconf import logging
 log = logging.getLogger(__name__)
-# log.setLevel(logging.WARN)
-# log.setLevel(logging.INFO)
 log.setLevel(logging.DEBUG)
 
 
@@ -38,12 +36,10 @@ class GaainDataset(BaseDataset):
         self.ids = sorted(os.listdir(patient_dir))
         self.images_fps = [os.path.join(patient_dir, image_id, images_dir) for image_id in self.ids]
         self.masks_fps = [os.path.join(patient_dir, image_id, masks_dir) for image_id in self.ids]
-        # self.brain_fps = [os.path.join(patient_dir, image_id, 'brainmask_binary.nii.gz') for image_id in self.ids]
 
         flipped = {value: key for key, value in self.CLASSES.items()}
         self.index_classes = sorted([flipped[el] for el in classes])
         
-        # images와 masks 파일이 다 있는지 확인 검증
         img_notfound = False
         msk_notfound = False
         for idx, (img, msk) in enumerate(zip(self.images_fps, self.masks_fps)):
@@ -79,22 +75,17 @@ class GaainDataset(BaseDataset):
         return self.ids[idx]
     
     def __getitem__(self, idx):
-        # print(f'PID: {self.ids[idx]}')
         image_path = self.images_fps[idx]
         mask_path = self.masks_fps[idx]
-        # brain_path = self.brain_fps[idx]
         itk_image = sitk.ReadImage(image_path)
         itk_mask = sitk.ReadImage(mask_path)
-        # itk_brain = sitk.ReadImage(brain_path)
-        numpy_image = sitk.GetArrayFromImage(itk_image).astype('float32') # Convert the image to a NumPy array
-        numpy_mask = sitk.GetArrayFromImage(itk_mask).astype('float32') # Convert the image to a NumPy array
-        # numpy_brain = sitk.GetArrayFromImage(itk_brain).astype('float32') # Convert the image to a NumPy array
-        torch_image = torch.from_numpy(numpy_image) # Convert the NumPy array to a Torch tensor
-        torch_mask = torch.from_numpy(numpy_mask) # Convert the NumPy array to a Torch tensor
-        # torch_brain = torch.from_numpy(numpy_brain) # Convert the NumPy array to a Torch tensor
+        numpy_image = sitk.GetArrayFromImage(itk_image).astype('float32')
+        numpy_mask = sitk.GetArrayFromImage(itk_mask).astype('float32')
+        torch_image = torch.from_numpy(numpy_image)
+        torch_mask = torch.from_numpy(numpy_mask)
         
         if self.class_values:
-            boolean_masks = [(torch_mask == v) for v in self.class_values] # Convert the NumPy array to a Torch tensor
+            boolean_masks = [(torch_mask == v) for v in self.class_values]
             sum_mask = torch.stack(boolean_masks).sum(dim=0).clamp(max=1).float()
             torch_mask *= sum_mask
             
@@ -102,10 +93,7 @@ class GaainDataset(BaseDataset):
 
         if self.preprocessing:
             pass
-            # if 'skullstriping' in self.preprocessing:
-            #     torch_image *= torch_brain
 
-        # Optionally, you may add some pre-processing or data augmentation here.
         if self.augmentation:
             subject_dict = {
                 'volume': tio.ScalarImage(tensor=torch_image.unsqueeze(0)), 
@@ -122,13 +110,12 @@ class GaainDataset(BaseDataset):
             torch_image, torch_mask = transformed_subject['volume'].data.squeeze(0), transformed_subject['mask'].data.squeeze(0)
             
             tmp_masks = []
-            for i in range(one_hot_masks.shape[0]):  # 11은 one_hot_mask의 channel 수를 나타냅니다.
+            for i in range(one_hot_masks.shape[0]):
                 key = f'one_hot_label_{i}'  
                 one_hot_channel = transformed_subject[key].data.squeeze(0)
                 tmp_masks.append(one_hot_channel)
                 
-            # one_hot_masks를 하나의 tensor로 합치기
-            one_hot_masks = torch.stack(tmp_masks, dim=0)  # 결과: 11 x 64 x 64 x 64
+            one_hot_masks = torch.stack(tmp_masks, dim=0)
 
         return torch_image.unsqueeze(0), torch_mask.unsqueeze(0), one_hot_masks.unsqueeze(1)
     
@@ -145,21 +132,18 @@ class GaainDataset(BaseDataset):
 
         return one_hot, one_hot_map
 
-    @lru_cache(maxsize=1)  # 무제한 캐시 크기; 필요에 따라 maxsize를 설정할 수 있습니다.
+    @lru_cache(maxsize=1)
     def freesurfer_colormap(self, cmap):
         if cmap == 'lut':
             colordict = self.COLORDICT
-        # 0부터 2035까지의 모든 값에 대해 RGB 값을 매핑
         rgb_values = [(0, 0, 0) for _ in range(2036)]
 
         for key, value in colordict.items():
-            if key < 2036:  # 이 부분은 주어진 범위 내에 있는 키만 처리하기 위함
+            if key < 2036:
                 rgb_values[key] = value
 
-        # RGB 값들을 0~1 범위로 정규화
         normalized_rgb_values = [(r/255, g/255, b/255) for r, g, b in rgb_values]
 
-        # 커스텀 colormap 생성
         custom_colormap = mcolors.ListedColormap(normalized_rgb_values)
 
         return custom_colormap

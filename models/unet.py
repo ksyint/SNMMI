@@ -5,7 +5,6 @@ Author: Amir Aghdam
 """
 
 from torch import nn
-# from torchsummary import summary
 import torch
 import time
 
@@ -120,40 +119,19 @@ class UNet3D(nn.Module):
         self.s_block2 = UpConv3DBlock(in_channels=level_3_chnls, res_channels=level_2_chnls)
         self.s_block1 = UpConv3DBlock(in_channels=level_2_chnls, res_channels=level_1_chnls, num_classes=num_classes, last_layer=True)
             
-        # 모델의 모든 레이어에 대해 초기화 함수 적용
-        # self.apply(init_weights)
         
-        # for m in self.modules():
-        #     if isinstance(m, nn.Conv3d):
-        #         nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
-                # nn.init.kaiming_uniform_(m.weight, mode="fan_out", nonlinearity="relu")
 
-                # nn.init.xavier_normal_(m.weight)
-                # 필요한 경우 편향 초기화를 추가할 수 있습니다.
-                # if m.bias is not None:
-                #     nn.init.constant_(m.bias, 0)
     
     def forward(self, input):
-        #Analysis path forward feed
         out, residual_level1 = self.a_block1(input)
         out, residual_level2 = self.a_block2(out)
         out, residual_level3 = self.a_block3(out)
 
-        # BottleNeck Layer (Latent Space)
-        latent, _ = self.bottleNeck(out)  # latent는 이제 중간 표현입니다.
-        # out, _ = self.bottleNeck(out)
+        latent, _ = self.bottleNeck(out)
 
-        #Synthesis path forward feed
         out = self.s_block3(latent, residual_level3)
         out = self.s_block2(out, residual_level2)
         out = self.s_block1(out, residual_level1)
-        return out, latent  # out과 latent 둘 다 반환합니다.
+        return out, latent
 
 
-
-# if __name__ == '__main__':
-#     #Configurations according to the Xenopus kidney dataset
-#     model = UNet3D(in_channels=3, num_classes=1)
-#     start_time = time.time()
-#     summary(model=model, input_size=(3, 16, 128, 128), batch_size=-1, device="cpu")
-#     print("--- %s seconds ---" % (time.time() - start_time))

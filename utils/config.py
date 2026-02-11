@@ -1,6 +1,5 @@
 import os
 
-
 Striatum_ADNI = {
     'description': 'Striatum',
     'train_dir': os.path.join('data', 'FREESURFER_ADNI_TRAIN'),
@@ -32,7 +31,6 @@ Striatum_ADNI = {
     'affine': 0.5,
     'zoom': 1.2,
     'znorm': True,
-
     'strategy': 'fedprox',
     'mu': 0.1,
     'resolution': 80,
@@ -55,14 +53,7 @@ VM100_1 = {
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [1., 2., 2., 1., 2., 2.],
 }
 
 VM100_2 = {
@@ -76,61 +67,39 @@ VM100_2 = {
         'Left-Cerebellum-Cortex',
         'Left-Caudate',
         'Left-Putamen',
-        
         'Right-Cerebellum-Cortex',
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [2., 1., 1., 2., 1., 1.],
 }
 
 VP100_1 = {
-    'seed': 1,
+    'seed': 2,
     **Striatum_ADNI,
     'classes': [
-        'Left-Cerebellum-Cortex',
+        'Left-Cerebral-Cortex',
         'Left-Caudate',
         'Left-Putamen',
-        'Right-Cerebellum-Cortex',
+        'Right-Cerebral-Cortex',
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [1., 1., 1., 1., 1., 1.],
 }
 
 VP100_2 = {
-    'seed': 1,
+    'seed': 3,
     **Striatum_ADNI,
     'classes': [
-        'Left-Cerebellum-Cortex',
+        'Left-Cerebral-Cortex',
         'Left-Caudate',
         'Left-Putamen',
-        'Right-Cerebellum-Cortex',
+        'Right-Cerebral-Cortex',
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [1., 1., 1., 1., 1., 1.],
 }
 
 VV100_1 = {
@@ -139,21 +108,12 @@ VV100_1 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        'Left-Cerebellum-Cortex',
         'Left-Caudate',
         'Left-Putamen',
-        'Right-Cerebellum-Cortex',
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [1., 1., 1., 1.],
 }
 
 VV100_2 = {
@@ -162,19 +122,10 @@ VV100_2 = {
     'orig_file': 'orig.nii',
     'mask_file': 'aseg.nii',
     'classes': [
-        'Left-Cerebellum-Cortex',
         'Left-Caudate',
         'Left-Putamen',
-        'Right-Cerebellum-Cortex',
         'Right-Caudate',
         'Right-Putamen',
     ],
-    'weights': [
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-      1.,
-    ],
+    'weights': [0., 0., 1., 1.],
 }
