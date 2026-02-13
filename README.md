@@ -1,4 +1,4 @@
-## 📝 Publication & Conference
+## 📝 Publication
 
 The paper was accepted for presentation at the **Society of Nuclear Medicine and Molecular Imaging (SNMMI) 2024**.
 
